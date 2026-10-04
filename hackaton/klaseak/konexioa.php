@@ -1,13 +1,14 @@
 <?php
-// Clase que gestiona la conexión con la base de datos
+// Datu-basearekin konexioa kudeatzen duen klasea
 class Conexion
 {
+    // MariaDB konektatzeko erabili dugun datuak
     private string $host = "localhost";
     private string $bd = "hackaton";
     private string $usuario = "wesuser";
     private string $clave = "123456";
 
-    // Devuelve un objeto PDO listo para usar
+    // PDO objektua itzuli
     public function conectar(): PDO
     {
         $pdo = new PDO(

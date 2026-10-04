@@ -1,40 +1,42 @@
 <?php
 require_once "konexioa.php";
 
-// Clase que gestiona los equipos (tabla Taldeak)
+// Taldeak taula (taldeak) kudeatzen duen klasea
 class Taldea
 {
     private PDO $db;
 
+    // Objektua sortzean datu-basearekin konektatzen da
     public function __construct()
     {
         $this->db = (new Conexion())->conectar();
     }
 
-    // Devuelve todos los equipos
+    // Talde guztiak itzultzen ditu
     public function zerrendatu(): array
     {
         $stmt = $this->db->query("SELECT id, izena, puntuak FROM Taldeak");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-        // Crea un equipo nuevo
+
+    // Talde berri bat sortzen du
     public function sortu(string $izena, int $puntuak): void
     {
         $stmt = $this->db->prepare("INSERT INTO Taldeak (izena, puntuak) VALUES (?, ?)");
         $stmt->execute([$izena, $puntuak]);
     }
 
-        // Cambia los puntos de un equipo
+    // Talde baten puntuak aldatzen ditu
     public function aldatu(int $id, int $puntuak): void
     {
         $stmt = $this->db->prepare("UPDATE Taldeak SET puntuak = ? WHERE id = ?");
         $stmt->execute([$puntuak, $id]);
     }
 
-        // Borra un equipo junto con sus miembros
+    // Taldea ezabatzen du, bere partaideekin batera
     public function ezabatu(int $id): void
     {
-        // Primero los miembros, porque dependen del equipo (clave foránea)
+        // Lehenengo partaideak, kanpoko gakoa (FK) dagoelako
         $stmt = $this->db->prepare("DELETE FROM Partaideak WHERE taldea_id = ?");
         $stmt->execute([$id]);
 
@@ -42,7 +44,7 @@ class Taldea
         $stmt->execute([$id]);
     }
 
-        // Devuelve un equipo por su id (o null si no existe)
+    // Talde bat bilatzen du id-aren arabera (null badago ez badago)
     public function bilatu(int $id): ?array
     {
         $stmt = $this->db->prepare("SELECT id, izena, puntuak FROM Taldeak WHERE id = ?");
@@ -50,5 +52,4 @@ class Taldea
         $emaitza = $stmt->fetch(PDO::FETCH_ASSOC);
         return $emaitza ?: null;
     }
-
 }
